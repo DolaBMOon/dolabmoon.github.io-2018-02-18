@@ -1,0 +1,23 @@
+---
+layout: post
+title: Review of SGU's Problem
+date: 2017-10-27 20:51:0 +0800
+categories: technology
+tags: acm.sgu.ru
+img: 
+---
+sgusgusgusgu...
+
+# SGU---)v)
+
+~~其实多半是一句话题解~~
+
+## [140. Integer Sequences](http://acm.sgu.ru/problem.php?contest=0&problem=140)
+
+就像链式求gcd一样地链式求exgcd
+
+## [153. Playing with matches](http://acm.sgu.ru/problem.php?contest=0&problem=153)
+
+首先会非常自然地想到找循环节啊,以及找循环节的种种..我是这样找哒:从一个很大的长度开始,枚举它等分成两份是否相同...这样就避免了很多奥妙重重的情况.
+
+然后就没有了.~~去膜拜其他大佬的代码ing~~

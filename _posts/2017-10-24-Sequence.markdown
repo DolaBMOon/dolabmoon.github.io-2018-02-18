@@ -1,0 +1,15 @@
+---
+layout: post
+title: Sequence
+date: 2017-10-24 21:06:30 +0800
+categories: technology
+tags: 数学
+img: 
+---
+1,0,1,0,1,0...
+
+# Sequence
+
+## 1+4+9+...
+
+![](http://latex.codecogs.com/gif.latex?1^2+2^2+3^2+...+n^2={n\times(n+1)\times(2\times n+1)\over 6})

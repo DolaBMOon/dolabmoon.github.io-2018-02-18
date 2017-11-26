@@ -1,0 +1,124 @@
+---
+layout: post
+title: ExDSU
+date: 2017-11-04 15:03:0 +0800
+categories: technology
+tags: 图论 数据结构
+img: 
+---
+ex还有什么意思呢
+
+# 关于并查集奥妙重重又不可言说的0个秘密
+
+## 关于时间复杂度的种种
+
+直接路径压缩并查集一次合并是O(log(n))的,按秩合并也是,按秩合并+路径压缩是O(α)的.
+
+但是啊但是...然而啊然而
+
+直接按秩合并,不路径压缩,是可以回溯的.因为路径没有被压缩啊~
+
+## Sample
+
+### [BZOJ 1018: [SHOI2008]堵塞的交通traffic](http://www.lydsy.com/JudgeOnline/problem.php?id=1018)
+
+正解是线段树云云...以及可以用**分治DSU**水过
+
+按照时间建立线段树,可以江,某条边的生命分成log份..
+
+然后在线段树上dfs一边,每次进入时应用,出去时回退,一共nlog(n)个点,每次应用复杂度为log(n)
+
+```cpp
+%:pragma GCC optimize(2)
+#include<iostream>
+#include<algorithm>
+#include<cstring>
+#include<cstdio>
+#include<cmath>
+#include<vector>
+#include<map>
+using namespace std;
+#define pir pair<int,int>
+#define mkpir(x,y) make_pair(x,y)
+#define x1 MOEx1
+#define y1 MOEy1
+const int MX=100000;
+int stack[(MX<<1)+10],top,fa[(MX<<1)+10],sz[(MX<<1)+10];
+inline int getfa(int x){while(x!=fa[x])x=fa[x];return x;}
+inline void linkit(int x,int y)
+{
+	x=getfa(x);y=getfa(y);
+	if(x==y)return;
+	if(sz[x]>sz[y])swap(x,y);
+	fa[x]=y;sz[y]+=sz[x];stack[++top]=x;
+}
+inline void backit()
+{
+	int x=stack[top--];
+	sz[fa[x]]-=sz[x];
+	fa[x]=x;
+}
+struct Edge{int u,v;};
+int fir[(MX<<2)+10],nxt[(MX<<5)+10],tote;Edge edges[(MX<<5)+10];
+void adde(int o,int u,int v){edges[++tote]=(Edge){u,v};nxt[tote]=fir[o];fir[o]=tote;}
+int n,qtime,totq,totop;
+map<pir,int> mp;
+inline int hash(int x,int y){return (x-1)*n+y;}
+int asku[MX+10],askv[MX+10];bool res[MX+10];
+void add(int ql,int qr,const pir& w,int o=1,int l=0,int r=totq)
+{
+	if(ql==l&&qr==r){adde(o,w.first,w.second);return;}
+	int mid=(l+r)>>1,lc=o<<1,rc=lc|1;
+	if(qr<=mid)add(ql,qr,w,lc,l,mid);
+	else if(ql>mid)add(ql,qr,w,rc,mid+1,r);
+	else add(ql,mid,w,lc,l,mid),add(mid+1,qr,w,rc,mid+1,r);
+}
+void solve(int o=1,int l=0,int r=totq)
+{
+	int rec=top;
+	for(int i=fir[o];i;i=nxt[i])
+	{
+		Edge& e=edges[i];
+		linkit(e.u,e.v);
+	}
+	if(l==r)res[l]=(getfa(asku[l])==getfa(askv[l]));
+	else
+	{
+		int mid=(l+r)>>1;
+		solve(o<<1,l,mid);
+		solve(o<<1|1,mid+1,r);
+	}
+	while(top!=rec)backit();
+}
+int op[MX+10],x1[MX+10],y1[MX+10],x2[MX+10],y2[MX+10];
+int main()
+{
+	scanf("%d",&n);for(int i=n<<1;i;--i)fa[i]=i;
+	char q[23];pir x;
+	while(scanf("%s",q),q[0]!='E')
+	{
+		++totop;scanf("%d%d%d%d",x1+totop,y1+totop,x2+totop,y2+totop);
+		switch(q[0])
+		{
+			case 'O':op[totop]=1;break;
+			case 'C':op[totop]=2;break;
+			case 'A':op[totop]=3;++totq;break;
+		}
+	}
+	for(int i=1;i<=totop;++i)
+	{
+		x=mkpir(hash(x1[i],y1[i]),hash(x2[i],y2[i]));if(x.first>x.second)swap(x.first,x.second);
+		if(op[i]==1&&mp.find(x)==mp.end())mp[x]=qtime+1;
+		else if(op[i]==2&&mp.find(x)!=mp.end())
+		{
+			if(mp[x]<=qtime)add(mp[x],qtime,x);
+			mp.erase(x);
+		}
+		else if(op[i]==3)asku[++qtime]=x.first,askv[qtime]=x.second;
+	}
+	for(map<pir,int>::iterator it=mp.begin();it!=mp.end();++it)if((it->second)<=qtime)add(it->second,qtime,it->first);
+	solve();
+	for(int i=1;i<=qtime;++i)printf("%s\n",res[i]?"Y":"N");
+	return 0;
+}
+```

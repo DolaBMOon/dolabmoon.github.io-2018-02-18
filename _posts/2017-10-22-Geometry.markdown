@@ -1,0 +1,34 @@
+---
+layout: post
+title: Geometry
+date: 2017-10-22 11:4:0 +0800
+categories: technology
+tags: 数学
+img: 
+---
+妙啊,妙啊...
+
+# Geometry
+
+## 求线段交点
+
+```cpp
+Point getcross(const Point& a,const Vector& b,const Point& c,const Vector& d)
+{
+	return a+b*(cross(d,c-a)/cross(d,b));
+}
+```
+
+## 三角函数和角公式
+
+![](http://latex.codecogs.com/gif.latex?sin(\alpha+\beta)=sin(\alpha)\times cos(\beta)+cos(\alpha)\times sin(\beta))
+
+![](http://latex.codecogs.com/gif.latex?cos(\alpha+\beta)=cos(\alpha)\times cos(\beta)-sin(\alpha)\times cos(\beta))
+
+**正余同余正，余余反正正。**
+
+## 坐标旋转
+
+![](http://latex.codecogs.com/gif.latex?(x\times\cos(\alpha)+y\times\sin(\alpha),-x\times\sin(\alpha)+y\times\cos(\alpha)))
+
+![](http://latex.codecogs.com/gif.latex?\alpha)**为逆时针旋转角度,(x,y)为旋转前坐标**

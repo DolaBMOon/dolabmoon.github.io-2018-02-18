@@ -1,0 +1,198 @@
+---
+layout: post
+title: KthShort
+date: 2017-10-30 22:08:0 +0800
+categories: technology
+tags: 暴力
+img: 
+---
+KengthSHort
+
+# 第K短路
+
+## 简单的不简单第K短路
+
+A*+Dijkstra保证第一次找到最短路,第二次找到次短路...
+
+[POJ2449](http://poj.org/problem?id=2449)
+
+```cpp
+#include<cstring>
+#include<cstdlib>
+#include<cstdio>
+#include<cmath>
+#include<algorithm>
+#include<queue>
+#include<iostream>
+#include<cassert>
+using namespace std;
+const int MAXN=1000;
+const int MAXM=100000;
+const int INF=0x3f3f3f3f;
+struct Edge{int u,v,d;};
+struct Node{int o,d;};
+int n,m,s,t,k,cnt;
+int fir[MAXN+10],nxt[MAXM+10],nfir[MAXN+10],nnxt[MAXM+10],tot;
+Edge edges[MAXM+10];
+void adde(int u,int v,int d)
+{
+	edges[++tot]=(Edge){u,v,d};
+	nxt[tot]=fir[u];fir[u]=tot;
+	nnxt[tot]=nfir[v];nfir[v]=tot;
+}
+int dis[MAXN+10],now[MAXN+10];
+struct cmp{bool operator()(const Node& a,const Node& b){return a.d+dis[a.o]>b.d+dis[b.o];}};
+inline void init()
+{
+	tot=cnt=0;
+	memset(fir,0,sizeof fir);
+	memset(nfir,0,sizeof nfir);
+	memset(dis,0x3f,sizeof dis);
+	memset(now,0x3f,sizeof now);
+}
+inline void DJ()
+{
+	now[t]=0;
+	for(int cc=1,u;cc<=n;++cc)
+	{
+		u=0;
+		for(int i=1;i<=n;++i)
+		{
+			if(dis[i]<INF)continue;
+			if(now[u]>now[i])u=i;
+		}
+		dis[u]=now[u];
+		for(int i=nfir[u];i;i=nnxt[i])
+		{
+			Edge& e=edges[i];
+			now[e.u]=min(now[e.u],dis[u]+e.d);
+		}
+	}
+}
+inline void KR()
+{
+	if(dis[s]>=INF){puts("-1");return;}
+	priority_queue<Node,vector<Node>,cmp> Q;Q.push((Node){s,0});
+	while(!Q.empty())
+	{
+		Node u=Q.top();Q.pop();
+		if(u.o==t)
+		{
+			++cnt;
+			if(cnt==k){printf("%d\n",u.d);return;}
+		}
+		for(int i=fir[u.o];i;i=nxt[i])
+		{
+			Edge& e=edges[i];
+			Q.push((Node){e.v,u.d+e.d});
+		}
+	}
+	puts("-1");
+}
+int main()
+{
+	while(~scanf("%d%d",&n,&m))
+	{
+		init();
+		for(int i=1,u,v,d;i<=m;++i)scanf("%d%d%d",&u,&v,&d),adde(u,v,d);
+		scanf("%d%d%d",&s,&t,&k);if(s==t)++k;
+		DJ();KR();
+	}
+	return 0;
+}
+```
+
+## 不简单的简单第K短路
+
+A*加上类似迭代加深的东西吧
+
+[BZOJ1073](http://www.lydsy.com/JudgeOnline/problem.php?id=1073)
+
+```cpp
+#include<iostream>
+#include<algorithm>
+#include<cstring>
+#include<cstdio>
+#include<cmath>
+#include<vector>
+using namespace std;
+const int MAXN=50;
+const int MAXK=300000;
+const int INF=0x3f3f3f3f;
+struct Data{int len;vector<int> p;};
+int n,m,k,s,t,G[MAXN+10][MAXN+10],dis[MAXN+10],now[MAXN+10],lim,newlim,d[MAXN+10],cnt;
+Data res[MAXK+10];vector<int> rec;
+inline void DJ()
+{
+	memset(dis,0x3f,sizeof dis);memset(now,0x3f,sizeof now);now[t]=0;
+	for(int cc=1,u;cc<=n;++cc)
+	{
+		u=0;
+		for(int i=1;i<=n;++i)if(dis[i]>=INF&&now[u]>now[i])u=i;
+		dis[u]=now[u];
+		for(int i=1;i<=n;++i)now[i]=min(now[i],dis[u]+G[i][u]);
+	}
+}
+int q[MAXN+10],st,ed;
+int vis[MAXN+10],tot;
+bool check(int x)
+{
+	++tot;
+	q[st=ed=0]=x;vis[x]=tot;
+	while(st<=ed)
+	{
+		int u=q[st++];
+		for(int i=1;i<=n;++i)
+		{
+			if(G[u][i]>=INF||~d[i]||vis[i]==tot)continue;
+			if(i==t)return true;
+			vis[i]=tot;q[++ed]=i;
+		}
+	}
+	return false;
+}
+void dfs(int u)
+{
+	if(d[u]+dis[u]>lim){newlim=min(newlim,d[u]+dis[u]);return;}
+	if(u==t){res[++cnt].len=d[u];res[cnt].p=rec;return;}
+	if(!check(u))return;
+	rec.push_back(u);
+	for(int i=1;i<=n;++i)
+	{
+		if(G[u][i]>=INF||~d[i])continue;
+		d[i]=d[u]+G[u][i];
+		dfs(i);d[i]=-1;
+	}
+	rec.pop_back();
+}
+bool cmp(const Data& a,const Data& b)
+{
+	if(a.len!=b.len)return a.len<b.len;
+	for(int i=0;i<(int)a.p.size()&&i<(int)b.p.size();++i)
+	{
+		if(a.p[i]!=b.p[i])return a.p[i]<b.p[i];
+	}
+	return a.p.size()<b.p.size();
+}
+int main()
+{
+	scanf("%d%d%d%d%d",&n,&m,&k,&s,&t);memset(G,0x3f,sizeof G);
+	for(int i=1;i<=m;++i)
+	{
+		int u,v,d;scanf("%d%d%d",&u,&v,&d);
+		G[u][v]=d;
+	}
+	DJ();if(dis[s]>=INF)return puts("No"),0;
+	lim=dis[s];newlim=INF;cnt=0;memset(d,-1,sizeof d);d[s]=0;
+	while(dfs(s),cnt<k)
+	{
+		if(newlim>=INF)return puts("No"),0;
+		lim=newlim;newlim=INF;cnt=0;memset(d,-1,sizeof d);d[s]=0;
+	}
+	for(int i=1;i<=cnt;++i)res[i].p.push_back(t);
+	sort(res+1,res+cnt+1,cmp);
+	for(int i=0;i<(int)res[k].p.size()-1;++i)printf("%d-",res[k].p[i]);
+	printf("%d\n",t);
+	return 0;
+}
+```

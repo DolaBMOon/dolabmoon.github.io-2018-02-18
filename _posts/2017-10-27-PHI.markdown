@@ -1,0 +1,60 @@
+---
+layout: post
+title: Euler's Theorem
+date: 2017-10-27 19:41:0 +0800
+categories: technology
+tags: 数学
+img: 
+---
+p...h...i...
+
+# Euler
+
+## PHI
+
+![](http://latex.codecogs.com/gif.latex?\phi(n)=\sum_{i=1}^{n}[gcd(i,n)==1])即n的缩系大小
+
+1. ![](http://latex.codecogs.com/gif.latex?\phi(p)=p-1)当p是一个质数,当然啦
+2. ![](http://latex.codecogs.com/gif.latex?\phi(a\times b)=\phi(a)\times \phi(b))当gcd(a,b)==1.因为,设![](http://latex.codecogs.com/gif.latex?n=a\times b),小于等于且与n互质的数必然要与a,b互质,同时又由于a,b互质,所以a缩系中的任一元素与b缩系中的任一元素的乘积组成n的缩系,由此可见欧拉函数是积性的.
+3. ![](http://latex.codecogs.com/gif.latex?\phi(p^k)=p^k-p^{k-1})显然吧,因为一个数不与其互质当且仅当有个质因子为p
+4. 由以上结论可知![](http://latex.codecogs.com/gif.latex?\phi(n)=n\times \Pi_{i=1}^k{p_i-1\over p_i}),p为n的质因子,k为n的不同质因子个数
+
+## 欧拉定理
+
+![](http://latex.codecogs.com/gif.latex?a^{\phi(p)}\equiv 1(mod\ p))当a与p互质
+
+**Proof**:*以下运算均在mod p意义下进行...*![](http://latex.codecogs.com/gif.latex?\phi(p))为p的缩系大小,设p的缩系为![](http://latex.codecogs.com/gif.latex?\{x_1,x_2,...,x_{\phi(p)}\})
+
+![](http://latex.codecogs.com/gif.latex?a\times x_i\not \equiv a\times x_j(i\not =j)),想来是的,因为gcd(a,p)==1
+
+所以![](http://latex.codecogs.com/gif.latex?\{a\times x_1,a\times x_2,..,a\times x_{\phi(p)}\})也是p的一个缩系.
+
+所以,恩哼:
+
+![](http://latex.codecogs.com/gif.latex?a\times x_1\times a\times x_2\times...\times a\times x_{\phi(p)}\equiv x_1\times x_2\times...\times x_{\phi(p)})
+
+所以就两边消掉相同的一坨->![](http://latex.codecogs.com/gif.latex?a^{\phi(p)}\equiv 1)
+
+~~同时也证明了费马小定理~~
+
+## ex欧拉定理
+
+以下均在mod p意义下进行
+
+![](http://latex.codecogs.com/gif.latex?a^b\equiv a^{b\ mod\ \phi(p)})当gcd(a,p)==1
+
+![](http://latex.codecogs.com/gif.latex?a^b\equiv a^b)当![](http://latex.codecogs.com/gif.latex?gcd(a,p)\not=1)且![](http://latex.codecogs.com/gif.latex?b<\phi(p))
+
+![](http://latex.codecogs.com/gif.latex?a^b\equiv a^{b\ mod\ \phi(p)+\phi(p)})当![](http://latex.codecogs.com/gif.latex?gcd(a,p)\not=1)且![](http://latex.codecogs.com/gif.latex?b\ge\phi(p))
+
+其实可以简化如下
+
+![](http://latex.codecogs.com/gif.latex?a^b\equiv a^b)当![](http://latex.codecogs.com/gif.latex?b<\phi(p))
+
+![](http://latex.codecogs.com/gif.latex?a^b\equiv a^{b\ mod\ \phi(p)+\phi(p)})当![](http://latex.codecogs.com/gif.latex?b\ge\phi(p))
+
+然后然后,还有啊:
+
+![](http://latex.codecogs.com/gif.latex?x^{\phi(p)}\ge p)
+
+推荐:[BZOJ3884](http://www.lydsy.com/JudgeOnline/problem.php?id=3884)
