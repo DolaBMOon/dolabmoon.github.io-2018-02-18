@@ -1,0 +1,206 @@
+---
+layout: post
+title: Treap
+date: 2017-11-30 22:18:0 +0800
+categories: technology
+tags: 数据结构 模板
+img: 
+---
+
+Treap is good.
+
+# Treap(非旋)模板
+
+## 普通平衡树
+
+```cpp
+%:pragma GCC optimize(2)
+#include<cstdio>
+#include<iostream>
+#include<algorithm>
+using namespace std;
+const int MAXN=100000;
+inline int read()
+{
+	int res=0,fl=1;char ch;
+	while(!isdigit(ch=getchar())&&ch!='-');
+	if(ch=='-')fl=-1;else res=ch-'0';
+	while(isdigit(ch=getchar()))res=res*10-'0'+ch;
+	return fl*res;
+}
+int n,rt,ch[MAXN+5][2],v[MAXN+5],w[MAXN+5],sz[MAXN+5],tot;
+inline void print(int now=rt)
+{
+	if(!now)return;
+	print(ch[now][0]);
+	printf("%d ",v[now]);
+	print(ch[now][1]);
+}
+int new_node(int val){v[++tot]=val;w[tot]=rand();sz[tot]=1;return tot;}
+void update(int o){sz[o]=1+sz[ch[o][0]]+sz[ch[o][1]];}
+inline void split(int now,int a,int& x,int& y)
+{
+	if(!now){x=y=0;return;}
+	if(v[now]<=a)x=now,split(ch[now][1],a,ch[now][1],y);
+	else y=now,split(ch[now][0],a,x,ch[now][0]);
+	update(now);
+}
+inline int merge(int x,int y)
+{
+	if(!x||!y)return x+y;
+	if(w[x]<w[y]){ch[x][1]=merge(ch[x][1],y);update(x);return x;}
+	else{ch[y][0]=merge(x,ch[y][0]);update(y);return y;}
+}
+inline int kth(int k,int now=rt)
+{
+	while(1)
+	{
+		if(sz[ch[now][0]]>=k)now=ch[now][0];
+		else
+			if((k-=sz[ch[now][0]])==1)return now;
+			else now=ch[now][1],--k;
+	}
+}
+inline void insert(int val)
+{
+	int x,y;split(rt,val,x,y);
+	rt=merge(merge(x,new_node(val)),y);
+}
+inline void del(int val)
+{
+	int x,y,z;
+	split(rt,val,x,z);
+	split(x,val-1,x,y);
+	y=merge(ch[y][0],ch[y][1]);
+	rt=merge(merge(x,y),z);
+}
+inline int rk(int val)
+{
+	int x,y,res;split(rt,val-1,x,y);
+	res=sz[x]+1;rt=merge(x,y);
+	return res;
+}
+inline int pre(int val)
+{
+	int x,y,res;split(rt,val-1,x,y);
+	res=v[kth(sz[x],x)];rt=merge(x,y);
+	return res;
+}
+inline int nxt(int val)
+{
+	int x,y,res;split(rt,val,x,y);
+	res=v[kth(1,y)];rt=merge(x,y);
+	return res;
+}
+int main()
+{
+	srand(20020727);
+	n=read();
+	while(n--)
+	{
+		switch(read())
+		{
+			case 1:insert(read());break;
+			case 2:del(read());break;
+			case 3:printf("%d\n",rk(read()));break;
+			case 4:printf("%d\n",v[kth(read())]);break;
+			case 5:printf("%d\n",pre(read()));break;
+			case 6:printf("%d\n",nxt(read()));break;
+		}
+	}
+	return 0;
+}
+```
+
+## 文艺平衡树
+
+```cpp
+#include<iostream>
+#include<cstring>
+#include<cstdio>
+#include<cmath>
+#include<algorithm>
+using namespace std;
+const int MAXN=100000;
+const int MAXM=100000;
+inline int read()
+{
+	int res;char ch;
+	while(!isdigit(ch=getchar()));
+	res=ch-'0';
+	while(isdigit(ch=getchar()))res=res*10-'0'+ch;
+	return res;
+}
+int random(int l=520,int r=20020727){return rand()%(r-l+1)+l;}
+int n,m,ch[MAXN+10][2],nu[MAXN+10],w[MAXN+10],fl[MAXN+10],sz[MAXN+10],tot,rt;
+inline void pushdown(int o)
+{
+	if(fl[o])
+	{
+		fl[o]=0;
+		swap(ch[o][0],ch[o][1]);
+		fl[ch[o][0]]^=1;
+		fl[ch[o][1]]^=1;
+	}
+}
+inline void update(int o){sz[o]=1+sz[ch[o][0]]+sz[ch[o][1]];}
+inline int build(int l=1,int r=n,int lim=233)
+{
+	if(l>r)return 0;
+	int rec=++tot,mid=(l+r)>>1;
+	nu[rec]=mid;w[rec]=random(lim);
+	sz[rec]=1+(sz[ch[rec][0]=build(l,mid-1,w[rec])])+(sz[ch[rec][1]=build(mid+1,r,w[rec])]);
+	return rec;
+}
+inline void print(int o=rt)
+{
+	if(!o)return;
+	pushdown(o);
+	print(ch[o][0]);
+	printf("%d ",nu[o]);
+	print(ch[o][1]);
+}
+inline void split(int k,int& x,int& y,int o=rt)
+{
+	if(!o){x=y=0;return;}
+	pushdown(o);
+	int rec;
+	if((rec=sz[ch[o][0]]+1)<=k)split(k-rec,ch[x=o][1],y,ch[o][1]);
+	else split(k,x,ch[y=o][0],ch[o][0]);
+	update(o);
+}
+inline int merge(int x,int y)
+{
+	if(!x||!y)return x+y;
+	if(w[x]<=w[y])
+	{
+		pushdown(x);
+		ch[x][1]=merge(ch[x][1],y);
+		update(x);
+		return x;
+	}
+	else
+	{
+		pushdown(y);
+		ch[y][0]=merge(x,ch[y][0]);
+		update(y);
+		return y;
+	}
+}
+int main()
+{
+	srand(20020727);
+	n=read();m=read();
+	rt=build();
+	int l,r,x,y,z;
+	while(m--)
+	{
+		l=read();r=read();
+		split(r,y,z);split(l-1,x,y,y);
+		fl[y]^=1;
+		rt=merge(merge(x,y),z);
+	}
+	print();
+	return 0;
+}
+```
