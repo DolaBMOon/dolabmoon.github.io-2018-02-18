@@ -1,0 +1,123 @@
+---
+layout: post
+title: ISAP
+date: 2017-12-01 21:50:0 +0800
+categories: technology
+tags: 网络流
+img: 
+---
+
+greater than dinic!
+
+# ISAP
+
+```cpp
+#include<iostream>
+#include<queue>
+#include<algorithm>
+#include<cstring>
+#include<cstdio>
+#include<cmath>
+using namespace std;
+const int MAXN=23333;
+const int MAXM=5202333;
+const int INF=0x3f3f3f3f;
+const int buf_size=1000000;
+inline char gc()
+{
+	static char buf[buf_size + 1], *l = buf, *r = buf;
+	if (l == r) {
+		l = buf;
+		r = buf + fread(buf, 1, buf_size, stdin);
+	}
+	return *l ++;
+}
+inline int read()
+{
+	int res;char ch;
+	while(!isdigit(ch=gc()));
+	res=ch-'0';
+	while(isdigit(ch=gc()))res=res*10-'0'+ch;
+	return res;
+}
+struct Edge{int u,v,c;};
+int n,m,s,t;
+int fir[MAXN+10],nxt[MAXM+10],tote=1;
+Edge edges[MAXM+10];
+inline void adde(int u,int v,int c)
+{
+	edges[++tote]=(Edge){u,v,c};
+	nxt[tote]=fir[u];fir[u]=tote;
+	edges[++tote]=(Edge){v,u,0};
+	nxt[tote]=fir[v];fir[v]=tote;
+}
+int d[MAXN+10],cur[MAXN+10],p[MAXN+10],cnt[MAXN+10];
+inline int augment()
+{
+	int x=t,a=INF;
+	while(x!=s)
+	{
+		Edge& e=edges[p[x]];
+		a=min(a,e.c);
+		x=e.u;
+	}
+	x=t;
+	while(x!=s)
+	{
+		Edge& e=edges[p[x]];
+		e.c-=a;
+		edges[p[x]^1].c+=a;
+		x=e.u;
+	}
+	return a;
+}
+inline int maxflow(int s,int t)
+{
+	queue<int> Q;Q.push(t);d[t]=1;
+	while(!Q.empty())
+	{
+		int u=Q.front();Q.pop();
+		for(int i=fir[u];i;i=nxt[i])
+		{
+			Edge& e=edges[i^1];
+			if(!d[e.u]&&e.c){++cnt[d[e.u]=d[u]+1];Q.push(e.u);}
+		}
+	}
+	for(int i=1;i<=n;++i)cur[i]=fir[i];
+	int x=s,flow=0;
+	while(d[s]<=n)
+	{
+		if(x==t){flow+=augment();x=s;}
+		bool ok=false;
+		for(int& i=cur[x];i;i=nxt[i])
+		{
+			Edge& e=edges[i];
+			if(e.c&&d[x]==d[e.v]+1){p[x=e.v]=i;ok=true;break;}
+		}
+		if(!ok)
+		{
+			int mn=n;
+			for(int i=fir[x];i;i=nxt[i])
+			{
+				Edge& e=edges[i];
+				if(e.c&&d[e.v])mn=min(mn,d[e.v]);
+			}
+			if(!(--cnt[d[x]]))break;
+			++cnt[d[x]=mn+1];cur[x]=fir[x];
+			if(x!=s)x=edges[p[x]].u;
+		}
+	}
+	return flow;
+}
+int main()
+{
+	n=read();m=read();s=read();t=read();
+	for(int i=1,u,v,c;i<=m;++i)
+	{
+		u=read();v=read();c=read();
+		adde(u,v,c);
+	}
+	printf("%d",maxflow(s,t));
+	return 0;
+}
+```
