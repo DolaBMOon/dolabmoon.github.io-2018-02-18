@@ -1,0 +1,18 @@
+---
+layout: post
+title: pb_ds
+date: 2017-12-02 16:21:0 +0800
+categories: technology
+tags: pb_ds
+img: 
+---
+
+# 平板电视
+
+不要
+
+```cpp
+using namespace __gnu_pbds;
+```
+
+因为可能会和std重复..
