@@ -1,0 +1,151 @@
+---
+layout: post
+title: LCT
+date: 2017-12-05 21:08:0 +0800
+categories: technology
+tags: 数据结构
+img: 
+---
+
+# LCT
+
+## 基础操作
+
+1. 删除一条边
+2. 添加一条边
+3. 钦点一个点作为根
+4. 顺便维护一些信息
+
+## 实现
+
+### splay
+
+首先和熟练剖分一样有轻边重边之分.
+
+用splay来维护重链,也就是说一颗splay维护的一段连续区间代表了一条重链.
+
+![](http://images.cnblogs.com/cnblogs_com/DOlaBMOon/1095820/o_5b214c3f88087da7101520f9f57761a2.png)
+
+splay内部当然是双向边,以及splay之间的链接用单向边(轻边).
+
+splay维护重链的部分:
+
+```cpp
+int isroot(int x){return ch[f[x]][0]!=x&&ch[f[x]][1]!=x;}
+int getch(int x){return ch[f[x]][1]==x;}
+void rotate(int x)
+{
+	int fa=f[x],fafa=f[fa],k=getch(x);
+	if(!isroot(fa))ch[fafa][getch(fa)]=x;
+	f[x]=fafa;
+	ch[fa][k]=ch[x][!k];f[ch[fa][k]]=fa;
+	ch[x][!k]=fa;f[fa]=x;
+}
+void pushdown(int x)
+{
+	if(lazy[x]&&x)
+	{
+		if(ch[x][0])lazy[ch[x][0]]^=1;
+		if(ch[x][1])lazy[ch[x][1]]^=1;
+		lazy[x]=0;
+		swap(ch[x][0],ch[x][1]);
+	}
+}
+void push(int x)
+{
+	if(!isroot(x))push(f[x]);
+	pushdown(x);
+}
+void splay(int x)
+{
+	push(x);
+	for(int fa;!isroot(x);rotate(x))if(!isroot(fa=f[x]))rotate(getch(fa)==getch(x)?fa:x);
+}
+```
+
+至于lazy维护的是区间反转标记,至于为什么后面会说.
+
+### access
+
+暴力,使得某个点x到其根节点的轻边成为重边,同时x成为这条重链的低端.
+
+```cpp
+void access(int x){for(int y=0;x;y=x,x=f[x])splay(x),ch[x][1]=y;}
+```
+
+access的作用在于:
+
+因为splay维护的重链,所以要查询的信息在一棵splay里是不是比较好?
+
+写完splay和access后,lct的基本操作就可以假装写完了,其他的操作多半是splay和access的组合.
+
+### make root
+
+```cpp
+void mkrt(int x){access(x);splay(x);lazy[x]^=1;}
+```
+
+所以这就是反转操作的作用.
+
+access(x);splay(x);
+
+这样以后x在splay上就只有左孩子,没有右孩子,因为这条重链上的所有点都在x上边.
+
+然后我们要让x成为根,只要来一个大反转就可以辣!
+
+### find root
+
+```cpp
+int findrt(int x)
+{
+	access(x);splay(x);
+	while(ch[x][0])x=ch[x][0];
+	return x;
+}
+```
+
+是不是非常naive
+
+### link
+
+```cpp
+void link(int x,int y){mkrt(x);f[x]=y;}
+```
+
+是不是非常naive
+
+### cut
+
+```cpp
+void cut(int x,int y){mkrt(x);access(y);splay(y);ch[y][0]=f[x]=0;}
+```
+
+因为要删除(x,y)一定保证其存在.
+
+并且mkrt(x);access(y);splay(y)之后:
+
+           y
+          /
+         x
+
+想必这棵splay一定是这样.
+
+所以边直接删掉.
+
+## 维护边
+
+是不是只要每个点储存其连向父亲的边权就好了啊?
+
+这样可不可写啊?
+
+所以稳一点的方法还是把每一条边拆成边-点-边,然后继续维护点权.
+
+## 动态维护最小生成树
+
+既然可以维护边了,果然就可以维护最小生成树了吗!
+
+~~当然是只支持动态加边啦...~~
+
+>例题:
+[堵塞的交通traffic](http://uoj.ac/problem/3)
+[魔法森林forest](http://www.lydsy.com/JudgeOnline/problem.php?id=1018)
