@@ -16,3 +16,60 @@ using namespace __gnu_pbds;
 ```
 
 因为可能会和std重复..
+
+## priority_queue
+
+```cpp
+template < typename Value_Type ,
+typename Cmp_Fn = std :: less < Value_Type >,
+typename Tag = pairing_heap_tag ,
+typename Allocator = std :: allocator <char > >
+class priority_queue
+```
+
+Tag表示所使用的堆的类型:
+
+1. binary_heap_tag(二叉堆)
+2. binomial_heap_tag(二项堆)
+3. rc_binomial_heap_tag
+4. pairing_heap_tag(配对堆,默认,最快?)
+5. thin_heap_tag(经过改良的斐波那契堆)
+
+```cpp
+#include<iostream>
+#include<cstdio>
+#include<ext/pb_ds/priority_queue.hpp>
+using namespace std;
+#define Heap __gnu_pbds::priority_queue<int>
+Heap Q1,Q2;
+int main()
+{
+	Q1.push(5);Q1.push(2);Q1.push(0);//O(1)
+	Heap::point_iterator p=Q1.push(6);
+	Q1.modify(p,666);
+	Q2.push(5);Q2.push(1);Q2.push(7);
+	Q1.join(Q2);//O(1)
+	Q1.pop();
+	printf("%d",Q1.top());//O(1)
+	return 0;
+}
+```
+
+然而根据WC上大佬的说法,只有push,pop,join时,二叉堆最快.
+
+有了modify之后就用默认配对堆.
+
+其实就算不用pb_ds也可以有一个常数是stl 1/2的堆,在algorithm里
+
+```cpp
+struct Heap{
+	int a[233],len;
+	void push(int x)
+	{
+		a[len++]=x;
+		push_heap(a,a+len);
+	}
+	void pop(){pop_heap(a,a+len);--len;}
+	int top(){return a[0];}
+};
+```
