@@ -147,5 +147,5 @@ void cut(int x,int y){mkrt(x);access(y);splay(y);ch[y][0]=f[x]=0;}
 ~~当然是只支持动态加边啦...~~
 
 >例题:
-[堵塞的交通traffic](http://uoj.ac/problem/3)
-[魔法森林forest](http://www.lydsy.com/JudgeOnline/problem.php?id=1018)
+[魔法森林forest](http://uoj.ac/problem/3)
+[堵塞的交通traffic](http://www.lydsy.com/JudgeOnline/problem.php?id=1018)
