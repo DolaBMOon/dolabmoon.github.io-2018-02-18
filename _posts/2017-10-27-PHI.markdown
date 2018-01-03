@@ -15,7 +15,7 @@ p...h...i...
 ![](http://latex.codecogs.com/gif.latex?\phi(n)=\sum_{i=1}^{n}[gcd(i,n)==1])即n的缩系大小
 
 1. ![](http://latex.codecogs.com/gif.latex?\phi(p)=p-1)当p是一个质数,当然啦
-2. ![](http://latex.codecogs.com/gif.latex?\phi(a\times b)=\phi(a)\times \phi(b))当gcd(a,b)==1.因为,设![](http://latex.codecogs.com/gif.latex?n=a\times b),小于等于且与n互质的数必然要与a,b互质,同时又由于a,b互质,所以a缩系中的任一元素与b缩系中的任一元素的乘积组成n的缩系,由此可见欧拉函数是积性的.
+2. ![](http://latex.codecogs.com/gif.latex?\phi(a\times b)=\phi(a)\times \phi(b))当gcd(a,b)==1.因为,设![](http://latex.codecogs.com/gif.latex?n=a\times b),证明:略.
 3. ![](http://latex.codecogs.com/gif.latex?\phi(p^k)=p^k-p^{k-1})显然吧,因为一个数不与其互质当且仅当有个质因子为p
 4. 由以上结论可知![](http://latex.codecogs.com/gif.latex?\phi(n)=n\times \Pi_{i=1}^k{p_i-1\over p_i}),p为n的质因子,k为n的不同质因子个数
 
