@@ -7,7 +7,7 @@ tags: 数学
 img: 
 ---
 
-{%include latex.ext %}
+{% include latex.ext %}
 
 # 快速沃尔什变换
 
