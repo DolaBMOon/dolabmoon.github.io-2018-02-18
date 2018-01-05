@@ -1,0 +1,34 @@
+---
+layout: post
+title: Fast Walsh-Hadamard Transform
+date: 2018-01-05 20:13:0 +0800
+categories: technology
+tags: 数学
+img: 
+---
+
+{%include latex.ext %}
+
+# 快速沃尔什变换
+
+恩哼，对于一个私人博客来说。
+
+只是记录公式。
+
+只是记录公式。
+
+只是记录公式。
+
+假装$$S_0$$是左边的一坨,$$S_1$$是右边的一坨.
+
+## XOR
+
+$$(S_0+S_1,S_0-S_1)$$
+
+## AND
+
+$$(S_0+S_1,S_1)$$
+
+## OR
+
+$$(S_0,S_0+S_1)$$
