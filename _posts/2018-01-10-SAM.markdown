@@ -1,0 +1,75 @@
+---
+layout: post
+title: Suffix Automaton
+date: 2018-01-05 20:13:0 +0800
+categories: technology
+tags: 字符串
+img: 
+---
+
+{% include latex.ext %}
+
+# Suffix Automaton
+
+[POJ3261](http://poj.org/problem?id=3261)
+
+```cpp
+#include<iostream>
+#include<queue>
+#include<map>
+#include<algorithm>
+#include<cstring>
+#include<cstdio>
+#include<cmath>
+#include<set>
+using namespace std;
+#define makr(x,y) make_pair((x),(y))
+const int V=44444;
+struct Node{
+	int len,link;
+	map<int,int> nxt;
+};
+int n,k;
+Node nodes[V];int sz,last,cnt[V];
+set<pair<int,int> > S;
+void init(){sz=last=1;}
+void extra(int c)
+{
+	int p=last,cur=++sz;nodes[cur].len=nodes[p].len+1;
+	S.insert(makr(nodes[cur].len,cur));cnt[cur]=1;
+	while(p&&!nodes[p].nxt.count(c))nodes[p].nxt[c]=cur,p=nodes[p].link;
+	if(p)
+	{
+		int q=nodes[p].nxt[c];
+		if(nodes[p].len+1==nodes[q].len)nodes[cur].link=q;
+		else
+		{
+			int clone=++sz;
+			nodes[clone].len=nodes[p].len+1;
+			nodes[clone].link=nodes[q].link;
+			nodes[clone].nxt=nodes[q].nxt;
+			for(;p&&nodes[p].nxt[c]==q;p=nodes[p].link)nodes[p].nxt[c]=clone;
+			nodes[q].link=nodes[cur].link=clone;
+			S.insert(makr(nodes[clone].len,clone));
+		}
+	}
+	else nodes[cur].link=1;
+	last=cur;
+}
+int main()
+{
+	init();
+	scanf("%d%d",&n,&k);
+	for(int i=1,a;i<=n;++i)
+	{
+		scanf("%d",&a);
+		extra(a);
+	}
+	set<pair<int,int> >::reverse_iterator it;
+	for(it=S.rbegin();it!=S.rend();++it)cnt[nodes[it->second].link]+=cnt[it->second];
+	int ans=0;
+	for(int i=1;i<=sz;++i)if(cnt[i]>=k)ans=max(ans,nodes[i].len);
+	printf("%d",ans);
+	return 0;
+}
+```
