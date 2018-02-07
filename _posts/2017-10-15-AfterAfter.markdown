@@ -3,7 +3,7 @@ layout: post
 title: 后，初赛后
 date: 2017-10-15 13:07:0 +0800
 categories: living
-tags: QAQ
+tags: 
 img: 
 ---
 初赛暴0感言
